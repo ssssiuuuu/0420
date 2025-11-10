@@ -1,0 +1,2627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星火征程 - 红色记忆互动学习平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        :root {
+            --primary-red: #9e2a2a;
+            --dark-red: #7a1f1f;
+            --light-red: #c44545;
+            --light-bg: #f8f4e9;
+            --dark-text: #333333;
+            --accent-gold: #c9a769;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Serif SC', 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(201, 167, 105, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(158, 42, 42, 0.1) 0%, transparent 20%);
+        }
+
+        /* 粒子背景 */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* 导航栏样式 */
+        header {
+            background-color: rgba(158, 42, 42, 0.95);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+            color: var(--accent-gold);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 1.5rem;
+            position: relative;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 15px;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: left 0.5s;
+            z-index: -1;
+        }
+        
+        nav a:hover::before, nav a.active::before {
+            left: 0;
+        }
+        
+        nav a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        /* 主内容区域 */
+        main {
+            width: 90%;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 首页样式 */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            color: var(--primary-red);
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: var(--dark-text);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: var(--primary-red);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(158, 42, 42, 0.3);
+            margin-top: 1rem;
+        }
+        
+        .cta-button:hover {
+            background: var(--dark-red);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(158, 42, 42, 0.4);
+        }
+        
+        /* 每日红色文案区域 */
+        .daily-quote {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            position: relative;
+            border-left: 8px solid var(--accent-gold);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+        
+        .daily-quote:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .daily-quote::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 8rem;
+            color: rgba(201, 167, 105, 0.2);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        .daily-quote-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-bg);
+        }
+        
+        .daily-quote-title {
+            font-size: 1.5rem;
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+        }
+        
+        .daily-quote-title i {
+            margin-right: 10px;
+            color: var(--accent-gold);
+        }
+        
+        .daily-quote-date {
+            font-size: 1rem;
+            color: #777;
+            background: var(--light-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        
+        .daily-quote-content {
+            font-size: 1.6rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: var(--primary-red);
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0 1rem;
+        }
+        
+        .daily-quote-author {
+            text-align: center;
+            font-weight: bold;
+            color: var(--dark-text);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .daily-quote-tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .daily-quote-tag {
+            background-color: var(--light-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+        }
+        
+        .daily-quote-tag i {
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .daily-quote-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .daily-quote-btn {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+        
+        .daily-quote-btn i {
+            margin-right: 8px;
+        }
+        
+        .daily-quote-btn:hover {
+            background: var(--dark-red);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(158, 42, 42, 0.3);
+        }
+        
+        .daily-quote-btn.secondary {
+            background: transparent;
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+        }
+        
+        .daily-quote-btn.secondary:hover {
+            background: rgba(158, 42, 42, 0.1);
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: var(--transition);
+            border-top: 5px solid var(--accent-gold);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-red);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--dark-text);
+            font-size: 0.9rem;
+        }
+        
+        /* 星火征程页面样式 */
+        .journey-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .journey-header::before, .journey-header::after {
+            content: '';
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            left: 20%;
+            right: 20%;
+        }
+
+        .journey-header::before {
+            top: 0;
+        }
+
+        .journey-header::after {
+            bottom: 0;
+        }
+
+        .journey-header h2 {
+            font-size: 3rem;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+
+        .journey-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+        }
+
+        .journey-header p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--dark-text);
+        }
+
+        /* 时间轴容器 */
+        .timeline-container {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        /* 时间轴主线 */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to bottom, var(--primary-red), var(--accent-gold));
+            transform: translateX(-50%);
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(158, 42, 42, 0.3);
+        }
+
+        /* 时间轴节点 */
+        .timeline-node {
+            position: absolute;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gold);
+            border: 4px solid white;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            transition: var(--transition);
+        }
+
+        .timeline-node:hover {
+            transform: translateX(-50%) scale(1.2);
+            background: var(--primary-red);
+        }
+
+        /* 时间轴项目 */
+        .timeline-item {
+            display: flex;
+            margin-bottom: 6rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            width: 45%;
+            position: relative;
+            transition: var(--transition);
+            overflow: hidden;
+            border-top: 5px solid var(--accent-gold);
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            transform: rotate(45deg);
+            box-shadow: 3px -3px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::after {
+            right: -15px;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content::after {
+            left: -15px;
+        }
+
+        .timeline-image {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .timeline-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s;
+        }
+
+        .timeline-content:hover .timeline-image img {
+            transform: scale(1.05);
+        }
+
+        .timeline-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+        }
+
+        .timeline-date {
+            position: absolute;
+            top: 20px;
+            width: 160px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-red);
+            font-size: 1.2rem;
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            box-shadow: var(--card-shadow);
+            z-index: 5;
+        }
+
+        .timeline-item:nth-child(even) .timeline-date {
+            right: -180px;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-date {
+            left: -180px;
+        }
+
+        .timeline-body {
+            padding: 2rem;
+        }
+
+        .timeline-body h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-red);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-body h3 i {
+            margin-right: 10px;
+            color: var(--accent-gold);
+        }
+
+        .timeline-body p {
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-tag {
+            background-color: var(--light-bg);
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-tag i {
+            margin-right: 5px;
+            font-size: 0.7rem;
+        }
+
+        .timeline-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-btn {
+            background: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .timeline-btn i {
+            margin-right: 8px;
+        }
+
+        .timeline-btn:hover {
+            background: var(--dark-red);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(158, 42, 42, 0.3);
+        }
+
+        .timeline-btn.secondary {
+            background: transparent;
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+        }
+
+        .timeline-btn.secondary:hover {
+            background: rgba(158, 42, 42, 0.1);
+        }
+
+        .timeline-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-red), var(--accent-gold));
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #777;
+            white-space: nowrap;
+        }
+
+        /* 笔记页面样式 */
+        .notes-section {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2.5rem;
+        }
+        
+        .note-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            height: fit-content;
+            transition: var(--transition);
+            position: sticky;
+            top: 100px;
+        }
+        
+        .note-form:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .note-form h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-red);
+            border-bottom: 3px solid var(--accent-gold);
+            padding-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .note-form h2 i {
+            margin-right: 10px;
+            color: var(--accent-gold);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(158, 42, 42, 0.1);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .tag {
+            background-color: #f0f0f0;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        
+        .tag i {
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .tag.selected {
+            background-color: var(--primary-red);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-red), var(--light-red));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: var(--transition);
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(158, 42, 42, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .submit-btn i {
+            margin-right: 8px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(158, 42, 42, 0.4);
+        }
+        
+        .notes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .note-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.8rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border-top: 5px solid var(--accent-gold);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .note-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-red), var(--accent-gold));
+        }
+        
+        .note-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .note-title {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+        }
+        
+        .note-title i {
+            margin-right: 10px;
+            color: var(--accent-gold);
+        }
+        
+        .note-content {
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            max-height: 120px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .note-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(transparent, white);
+        }
+        
+        .note-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .note-tag {
+            background-color: var(--light-bg);
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+        }
+        
+        .note-tag i {
+            margin-right: 5px;
+            font-size: 0.7rem;
+        }
+        
+        .note-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .note-date {
+            font-size: 0.9rem;
+            color: #777;
+            display: flex;
+            align-items: center;
+        }
+        
+        .note-date i {
+            margin-right: 5px;
+        }
+        
+        .note-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .note-action {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            padding: 0.3rem;
+            border-radius: 50%;
+        }
+        
+        .note-action:hover {
+            color: var(--primary-red);
+            background: rgba(158, 42, 42, 0.1);
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .filter-tag {
+            background-color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .filter-tag i {
+            margin-right: 8px;
+        }
+        
+        .filter-tag.active {
+            background: linear-gradient(135deg, var(--primary-red), var(--light-red));
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* 成就页面样式 */
+        .achievements-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .achievement-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .achievement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-red), var(--accent-gold));
+        }
+        
+        .achievement-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .achievement-icon {
+            font-size: 3rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+        
+        .achievement-title {
+            font-size: 1.4rem;
+            color: var(--primary-red);
+            margin-bottom: 0.5rem;
+        }
+        
+        .achievement-desc {
+            color: var(--dark-text);
+            margin-bottom: 1.5rem;
+        }
+        
+        .achievement-progress {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .achievement-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-red), var(--accent-gold));
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        
+        .achievement-status {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        /* 时间轴导航 */
+        .timeline-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+        
+        .nav-btn {
+            background: white;
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-btn:hover {
+            background: var(--primary-red);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(158, 42, 42, 0.3);
+        }
+        
+        .nav-btn i {
+            margin-right: 8px;
+        }
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalFadeIn 0.5s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            background: var(--primary-red);
+            transform: rotate(90deg);
+        }
+        
+        .modal-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+        
+        .modal-header h2 {
+            color: var(--primary-red);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-header p {
+            color: #777;
+            font-size: 1.1rem;
+        }
+        
+        .modal-body {
+            padding: 1.5rem 2rem 2rem;
+        }
+        
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-text {
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-quote {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-gold);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        
+        .modal-quote p {
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-quote footer {
+            text-align: right;
+            font-weight: bold;
+            color: var(--primary-red);
+        }
+        
+        .modal-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .gallery-item {
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--accent-gold);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            background: var(--accent-gold);
+            transform: translateY(-5px);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .timeline-content {
+                width: 48%;
+            }
+            
+            .timeline-item:nth-child(even) .timeline-date {
+                right: -160px;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-date {
+                left: -160px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .notes-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .note-form {
+                position: static;
+            }
+            
+            .timeline-line {
+                left: 30px;
+            }
+            
+            .timeline-node {
+                left: 30px;
+            }
+            
+            .timeline-item {
+                flex-direction: row !important;
+            }
+            
+            .timeline-content {
+                width: calc(100% - 80px);
+                margin-left: 80px;
+            }
+            
+            .timeline-content::after {
+                left: -15px !important;
+                right: auto !important;
+            }
+            
+            .timeline-date {
+                left: -100px !important;
+                right: auto !important;
+                width: 90px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+            }
+            
+            .user-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .notes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .journey-header h2 {
+                font-size: 2.5rem;
+            }
+            
+            .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 60px;
+            }
+            
+            .timeline-date {
+                left: -80px !important;
+                width: 70px;
+                font-size: 0.9rem;
+                padding: 0.6rem 1rem;
+            }
+            
+            .timeline-body h3 {
+                font-size: 1.5rem;
+            }
+            
+            .achievements-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .daily-quote-content {
+                font-size: 1.3rem;
+            }
+            
+            .daily-quote-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .daily-quote-btn {
+                width: 80%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .timeline-actions {
+                flex-direction: column;
+            }
+            
+            .timeline-btn {
+                justify-content: center;
+            }
+            
+            .timeline-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 80%;
+                justify-content: center;
+            }
+            
+            .filter-tags {
+                justify-content: center;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+    
+    <!-- 导航栏 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon"><i class="fas fa-fire"></i></span>
+                <span>星火征程</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-home"></i> 首页</a></li>
+                    <li><a href="#" class="nav-link" data-page="journey"><i class="fas fa-road"></i> 星火征程</a></li>
+                    <li><a href="#" class="nav-link" data-page="notes"><i class="fas fa-sticky-note"></i> 我的笔记</a></li>
+                    <li><a href="#" class="nav-link" data-page="achievements"><i class="fas fa-trophy"></i> 学习成就</a></li>
+                </ul>
+            </nav>
+            <div class="user-controls">
+                <div class="user-avatar" id="user-avatar">
+                    <span>用户</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main>
+        <!-- 首页 -->
+        <section id="home" class="page active">
+            <div class="hero">
+                <h1 class="animate-fadeInUp">星火征程 - 红色记忆互动学习平台</h1>
+                <p class="animate-fadeInUp">重温革命历程，记录学习感悟，在互动中传承红色基因</p>
+                <a href="#" class="cta-button" id="start-journey"><i class="fas fa-play"></i> 开始学习</a>
+            </div>
+            
+            <!-- 每日红色文案 -->
+            <div class="daily-quote animate-fadeInUp">
+                <div class="daily-quote-header">
+                    <div class="daily-quote-title">
+                        <i class="fas fa-calendar-day"></i> 今日红色文案
+                    </div>
+                    <div class="daily-quote-date" id="quote-date">
+                        <!-- 日期将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <div class="daily-quote-content" id="daily-quote-text">
+                    <!-- 文案内容将通过JavaScript动态生成 -->
+                </div>
+                <div class="daily-quote-author" id="daily-quote-author">
+                    <!-- 作者将通过JavaScript动态生成 -->
+                </div>
+                <div class="daily-quote-tags" id="daily-quote-tags">
+                    <!-- 标签将通过JavaScript动态生成 -->
+                </div>
+                <div class="daily-quote-actions">
+                    <button class="daily-quote-btn" id="refresh-quote">
+                        <i class="fas fa-sync-alt"></i> 换一条文案
+                    </button>
+                    <button class="daily-quote-btn secondary" id="share-quote">
+                        <i class="fas fa-share-alt"></i> 分享文案
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+                    <div class="stat-value" id="total-events">6</div>
+                    <div class="stat-label">历史事件</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-sticky-note"></i></div>
+                    <div class="stat-value" id="total-notes">0</div>
+                    <div class="stat-label">学习笔记</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-value" id="total-achievements">0</div>
+                    <div class="stat-label">学习成就</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-value" id="progress-percent">0%</div>
+                    <div class="stat-label">学习进度</div>
+                </div>
+            </div>
+            
+            <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem;">
+                <div class="feature-card" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--card-shadow); text-align: center; transition: var(--transition);">
+                    <div style="font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;"><i class="fas fa-road"></i></div>
+                    <h3 style="color: var(--primary-red); margin-bottom: 1rem;">互动时间轴</h3>
+                    <p>通过交互式时间轴学习红色历史，每个事件都有详细内容和学习任务</p>
+                </div>
+                
+                <div class="feature-card" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--card-shadow); text-align: center; transition: var(--transition);">
+                    <div style="font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;"><i class="fas fa-pen-fancy"></i></div>
+                    <h3 style="color: var(--primary-red); margin-bottom: 1rem;">学习笔记</h3>
+                    <p>记录学习感悟和心得体会，建立个人红色知识库</p>
+                </div>
+                
+                <div class="feature-card" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--card-shadow); text-align: center; transition: var(--transition);">
+                    <div style="font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;"><i class="fas fa-trophy"></i></div>
+                    <h3 style="color: var(--primary-red); margin-bottom: 1rem;">成就系统</h3>
+                    <p>完成学习任务获得成就，激励持续学习红色历史</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 星火征程页面 -->
+        <section id="journey" class="page">
+            <div class="journey-header">
+                <h2><i class="fas fa-road"></i> 星火征程</h2>
+                <p>跟随时间轴重温红色历史，完成学习任务，点亮你的星火之路</p>
+            </div>
+
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                
+                <!-- 五四运动 -->
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-date">1919年</div>
+                    <div class="timeline-content">
+                        <div class="timeline-image">
+                            <img src="https://images.unsplash.com/photo-1589994965851-a8f479c573a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="五四运动">
+                        </div>
+                        <div class="timeline-body">
+                            <h3><i class="fas fa-users"></i> 五四运动</h3>
+                            <p>五四运动是1919年5月4日发生在北京的一场以青年学生为主，广大群众、市民、工商人士等阶层共同参与的，通过示威游行、请愿、罢工、暴力对抗政府等多种形式进行的爱国运动。</p>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 新民主主义革命</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 学生运动</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 爱国主义</span>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="timeline-btn" data-modal="modal-1"><i class="fas fa-book-open"></i> 学习详情</button>
+                                <button class="timeline-btn secondary add-note-btn" data-event="五四运动"><i class="fas fa-plus"></i> 添加笔记</button>
+                            </div>
+                            <div class="timeline-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%;"></div>
+                                </div>
+                                <div class="progress-text">学习进度: 75%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 中国共产党成立 -->
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-date">1921年</div>
+                    <div class="timeline-content">
+                        <div class="timeline-image">
+                            <img src="https://images.unsplash.com/photo-1591871937571-ee8c90d6c069?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="中共一大会址">
+                        </div>
+                        <div class="timeline-body">
+                            <h3><i class="fas fa-flag"></i> 中国共产党成立</h3>
+                            <p>1921年7月，中国共产党第一次全国代表大会在上海法租界和浙江嘉兴南湖的一艘游船上召开，标志着中国共产党的正式成立。这是中国历史上开天辟地的大事变。</p>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 建党伟业</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 革命起点</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 开天辟地</span>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="timeline-btn" data-modal="modal-2"><i class="fas fa-book-open"></i> 学习详情</button>
+                                <button class="timeline-btn secondary add-note-btn" data-event="中国共产党成立"><i class="fas fa-plus"></i> 添加笔记</button>
+                            </div>
+                            <div class="timeline-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 60%;"></div>
+                                </div>
+                                <div class="progress-text">学习进度: 60%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 红军长征 -->
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-date">1934-1936年</div>
+                    <div class="timeline-content">
+                        <div class="timeline-image">
+                            <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="长征路线">
+                        </div>
+                        <div class="timeline-body">
+                            <h3><i class="fas fa-road"></i> 红军长征</h3>
+                            <p>中国工农红军主力从长江南北各苏区向陕甘革命根据地的战略转移，行程约二万五千里。长征是人类历史上的伟大奇迹，红军途经14个省，翻越18座大山，跨过24条大河，走过荒草地，翻过雪山。</p>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 战略转移</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 革命精神</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 人类奇迹</span>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="timeline-btn" data-modal="modal-3"><i class="fas fa-book-open"></i> 学习详情</button>
+                                <button class="timeline-btn secondary add-note-btn" data-event="红军长征"><i class="fas fa-plus"></i> 添加笔记</button>
+                            </div>
+                            <div class="timeline-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 40%;"></div>
+                                </div>
+                                <div class="progress-text">学习进度: 40%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 抗日战争 -->
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-date">1937-1945年</div>
+                    <div class="timeline-content">
+                        <div class="timeline-image">
+                            <img src="https://images.unsplash.com/photo-1595624870715-6ac778f4b1b9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="抗日战争">
+                        </div>
+                        <div class="timeline-body">
+                            <h3><i class="fas fa-shield-alt"></i> 抗日战争</h3>
+                            <p>中国人民进行的长达八年的反抗日本帝国主义侵略的正义战争，是世界反法西斯战争的重要组成部分。中国共产党在抗日战争中发挥了中流砥柱的作用，领导人民军队和广大人民群众进行了艰苦卓绝的斗争。</p>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 全民族抗战</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 世界反法西斯</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 民族独立</span>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="timeline-btn" data-modal="modal-4"><i class="fas fa-book-open"></i> 学习详情</button>
+                                <button class="timeline-btn secondary add-note-btn" data-event="抗日战争"><i class="fas fa-plus"></i> 添加笔记</button>
+                            </div>
+                            <div class="timeline-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 30%;"></div>
+                                </div>
+                                <div class="progress-text">学习进度: 30%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 新中国成立 -->
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-date">1949年</div>
+                    <div class="timeline-content">
+                        <div class="timeline-image">
+                            <img src="https://images.unsplash.com/photo-1593081891733-f3c6d7b8060e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="开国大典">
+                        </div>
+                        <div class="timeline-body">
+                            <h3><i class="fas fa-star"></i> 新中国成立</h3>
+                            <p>1949年10月1日，毛泽东主席在天安门城楼上庄严宣告中华人民共和国成立，标志着中国人民从此站起来了，中国历史进入新纪元。新中国的成立是20世纪世界历史上最重大的事件之一。</p>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 开国大典</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 民族独立</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 历史新纪元</span>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="timeline-btn" data-modal="modal-5"><i class="fas fa-book-open"></i> 学习详情</button>
+                                <button class="timeline-btn secondary add-note-btn" data-event="新中国成立"><i class="fas fa-plus"></i> 添加笔记</button>
+                            </div>
+                            <div class="timeline-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 50%;"></div>
+                                </div>
+                                <div class="progress-text">学习进度: 50%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 改革开放 -->
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-date">1978年</div>
+                    <div class="timeline-content">
+                        <div class="timeline-image">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="改革开放">
+                        </div>
+                        <div class="timeline-body">
+                            <h3><i class="fas fa-chart-line"></i> 改革开放</h3>
+                            <p>1978年12月，中共十一届三中全会作出了实行改革开放的重大决策，开启了中国特色社会主义现代化建设的新时期。改革开放是决定当代中国命运的关键一招，也是实现中华民族伟大复兴的关键一招。</p>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 经济建设</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 现代化</span>
+                                <span class="timeline-tag"><i class="fas fa-tag"></i> 民族复兴</span>
+                            </div>
+                            <div class="timeline-actions">
+                                <button class="timeline-btn" data-modal="modal-6"><i class="fas fa-book-open"></i> 学习详情</button>
+                                <button class="timeline-btn secondary add-note-btn" data-event="改革开放"><i class="fas fa-plus"></i> 添加笔记</button>
+                            </div>
+                            <div class="timeline-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 20%;"></div>
+                                </div>
+                                <div class="progress-text">学习进度: 20%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-nav">
+                <button class="nav-btn" id="prev-btn"><i class="fas fa-arrow-left"></i> 上一个事件</button>
+                <button class="nav-btn" id="next-btn">下一个事件 <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </section>
+
+        <!-- 笔记页面 -->
+        <section id="notes" class="page">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-red); display: flex; align-items: center;">
+                <i class="fas fa-sticky-note" style="margin-right: 10px;"></i> 我的学习笔记
+            </h2>
+            
+            <div class="notes-section">
+                <div class="note-form">
+                    <h2><i class="fas fa-plus-circle"></i> 添加新笔记</h2>
+                    <form id="note-form">
+                        <div class="form-group">
+                            <label for="note-title"><i class="fas fa-heading"></i> 标题</label>
+                            <input type="text" id="note-title" class="form-control" placeholder="输入笔记标题" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="note-content"><i class="fas fa-align-left"></i> 内容</label>
+                            <textarea id="note-content" class="form-control" placeholder="写下你的学习感悟..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="note-event"><i class="fas fa-road"></i> 关联事件</label>
+                            <select id="note-event" class="form-control">
+                                <option value="">选择关联的历史事件（可选）</option>
+                                <option value="五四运动">五四运动</option>
+                                <option value="中国共产党成立">中国共产党成立</option>
+                                <option value="红军长征">红军长征</option>
+                                <option value="抗日战争">抗日战争</option>
+                                <option value="新中国成立">新中国成立</option>
+                                <option value="改革开放">改革开放</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tags"></i> 标签</label>
+                            <div class="tag-selector">
+                                <div class="tag" data-tag="爱国精神"><i class="fas fa-flag"></i> 爱国精神</div>
+                                <div class="tag" data-tag="奋斗精神"><i class="fas fa-fist-raised"></i> 奋斗精神</div>
+                                <div class="tag" data-tag="奉献精神"><i class="fas fa-hands-helping"></i> 奉献精神</div>
+                                <div class="tag" data-tag="理想信念"><i class="fas fa-star"></i> 理想信念</div>
+                                <div class="tag" data-tag="历史感悟"><i class="fas fa-monument"></i> 历史感悟</div>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> 保存笔记</button>
+                    </form>
+                </div>
+                
+                <div>
+                    <h3 style="margin-bottom: 1rem; display: flex; align-items: center;">
+                        <i class="fas fa-filter" style="margin-right: 10px;"></i> 笔记筛选
+                    </h3>
+                    <div class="filter-tags">
+                        <div class="filter-tag active" data-tag="all"><i class="fas fa-layer-group"></i> 全部</div>
+                        <div class="filter-tag" data-tag="爱国精神"><i class="fas fa-flag"></i> 爱国精神</div>
+                        <div class="filter-tag" data-tag="奋斗精神"><i class="fas fa-fist-raised"></i> 奋斗精神</div>
+                        <div class="filter-tag" data-tag="奉献精神"><i class="fas fa-hands-helping"></i> 奉献精神</div>
+                        <div class="filter-tag" data-tag="理想信念"><i class="fas fa-star"></i> 理想信念</div>
+                        <div class="filter-tag" data-tag="历史感悟"><i class="fas fa-monument"></i> 历史感悟</div>
+                    </div>
+                    
+                    <div class="notes-container" id="notes-list">
+                        <!-- 笔记卡片将通过JavaScript动态生成 -->
+                        <div class="empty-state" style="text-align: center; padding: 3rem; grid-column: 1 / -1;">
+                            <div style="font-size: 4rem; color: #ddd; margin-bottom: 1rem;"><i class="fas fa-sticky-note"></i></div>
+                            <h3 style="color: #777; margin-bottom: 1rem;">还没有任何笔记</h3>
+                            <p>点击左侧表单创建您的第一条学习笔记</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 成就页面 -->
+        <section id="achievements" class="page">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary-red); display: flex; align-items: center;">
+                <i class="fas fa-trophy" style="margin-right: 10px;"></i> 学习成就
+            </h2>
+            
+            <div class="achievements-container">
+                <div class="achievement-card">
+                    <div class="achievement-icon"><i class="fas fa-book-open"></i></div>
+                    <div class="achievement-title">初识星火</div>
+                    <div class="achievement-desc">完成第一个历史事件的学习</div>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="achievement-status">已获得</div>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon"><i class="fas fa-pen"></i></div>
+                    <div class="achievement-title">笔记达人</div>
+                    <div class="achievement-desc">创建5篇学习笔记</div>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 40%;"></div>
+                    </div>
+                    <div class="achievement-status">2/5 笔记</div>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon"><i class="fas fa-road"></i></div>
+                    <div class="achievement-title">长征之路</div>
+                    <div class="achievement-desc">完成所有历史事件的学习</div>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 50%;"></div>
+                    </div>
+                    <div class="achievement-status">3/6 事件</div>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon"><i class="fas fa-star"></i></div>
+                    <div class="achievement-title">红色传承者</div>
+                    <div class="achievement-desc">获得所有学习成就</div>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 25%;"></div>
+                    </div>
+                    <div class="achievement-status">1/4 成就</div>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon"><i class="fas fa-fire"></i></div>
+                    <div class="achievement-title">星火燎原</div>
+                    <div class="achievement-desc">连续7天登录学习</div>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 14%;"></div>
+                    </div>
+                    <div class="achievement-status">1/7 天</div>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="achievement-icon"><i class="fas fa-share-alt"></i></div>
+                    <div class="achievement-title">红色传播者</div>
+                    <div class="achievement-desc">分享3篇学习笔记</div>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="achievement-status">0/3 分享</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 学习详情模态框 -->
+    <div class="modal" id="modal-1">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-header">
+                <h2>五四运动</h2>
+                <p>1919年 | 新民主主义革命的开端</p>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img src="https://images.unsplash.com/photo-1589994965851-a8f479c573a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="五四运动">
+                </div>
+                <div class="modal-text">
+                    <p>五四运动是1919年5月4日发生在北京的一场以青年学生为主，广大群众、市民、工商人士等阶层共同参与的，通过示威游行、请愿、罢工、暴力对抗政府等多种形式进行的爱国运动，是中国人民彻底的反对帝国主义、封建主义的爱国运动。</p>
+                    <p>五四运动直接影响了中国共产党的诞生和发展，中国共产党党史一般将其定义为"反帝反封建的爱国运动"，并以此运动作为旧民主主义革命和新民主主义革命的分水岭。</p>
+                </div>
+                <div class="modal-quote">
+                    <p>"五四运动所进行的文化革命则是彻底地反对封建文化的运动，自有中国历史以来，还没有过这样伟大而彻底的文化革命。"</p>
+                    <footer>—— 毛泽东</footer>
+                </div>
+                <h3>学习任务</h3>
+                <div class="modal-text">
+                    <ul style="padding-left: 1.5rem; margin-bottom: 1.5rem;">
+                        <li>阅读五四运动相关文献资料</li>
+                        <li>了解五四运动对中国近代史的影响</li>
+                        <li>思考五四精神对当代青年的启示</li>
+                        <li>撰写一篇关于五四运动的学习笔记</li>
+                    </ul>
+                </div>
+                <h3>相关图片</h3>
+                <div class="modal-gallery">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="五四运动历史图片1">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="五四运动历史图片2">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1593081891733-f3c6d7b8060e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="五四运动历史图片3">
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button class="timeline-btn"><i class="fas fa-check-circle"></i> 标记为已完成</button>
+                    <button class="timeline-btn secondary add-note-btn" data-event="五四运动"><i class="fas fa-plus"></i> 添加学习笔记</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <h3 style="margin-bottom: 1rem;">星火征程 - 红色记忆互动学习平台</h3>
+            <p style="max-width: 600px; margin: 0 auto; opacity: 0.9;">重温革命历程，记录学习感悟，在互动中传承红色基因</p>
+            
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-weixin"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-weibo"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-qq"></i></a>
+                <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+            </div>
+            
+            <p style="margin-top: 1.5rem; opacity: 0.7;">© 2025 红色网页设计大赛作品（马马马） | 星火征程</p>
+        </div>
+    </footer>
+
+    <script>
+        // 初始化粒子背景
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#9e2a2a" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#9e2a2a",
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        out_mode: "out"
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" }
+                    }
+                }
+            });
+
+            // 初始化用户数据
+            if (!localStorage.getItem('userData')) {
+                const userData = {
+                    notes: [],
+                    achievements: ['初识星火'],
+                    progress: {
+                        '五四运动': 75,
+                        '中国共产党成立': 60,
+                        '红军长征': 40,
+                        '抗日战争': 30,
+                        '新中国成立': 50,
+                        '改革开放': 20
+                    },
+                    loginDays: 1
+                };
+                localStorage.setItem('userData', JSON.stringify(userData));
+            }
+
+            // 初始化每日红色文案
+            initDailyQuote();
+            updateUI();
+        });
+
+        // 红色文案数据库
+        const redQuotes = [
+            {
+                text: "为中华之崛起而读书。",
+                author: "周恩来",
+                tags: ["爱国", "奋斗", "教育"]
+            },
+            {
+                text: "星星之火，可以燎原。",
+                author: "毛泽东",
+                tags: ["革命", "信念", "希望"]
+            },
+            {
+                text: "自己动手，丰衣足食。",
+                author: "毛泽东",
+                tags: ["自力更生", "艰苦奋斗", "生产"]
+            },
+            {
+                text: "人民有信仰，民族有希望，国家有力量。",
+                author: "习近平",
+                tags: ["信仰", "民族", "国家"]
+            },
+            {
+                text: "不忘初心，牢记使命。",
+                author: "习近平",
+                tags: ["初心", "使命", "责任"]
+            },
+            {
+                text: "革命理想高于天。",
+                author: "毛泽东",
+                tags: ["理想", "革命", "信念"]
+            },
+            {
+                text: "全心全意为人民服务。",
+                author: "毛泽东",
+                tags: ["服务", "人民", "宗旨"]
+            },
+            {
+                text: "艰苦奋斗，勤俭建国。",
+                author: "毛泽东",
+                tags: ["奋斗", "勤俭", "建国"]
+            },
+            {
+                text: "实现中华民族伟大复兴的中国梦。",
+                author: "习近平",
+                tags: ["复兴", "中国梦", "民族"]
+            },
+            {
+                text: "绿水青山就是金山银山。",
+                author: "习近平",
+                tags: ["生态", "发展", "可持续"]
+            },
+            {
+                text: "红军不怕远征难，万水千山只等闲。",
+                author: "毛泽东",
+                tags: ["长征", "勇气", "革命"]
+            },
+            {
+                text: "下定决心，不怕牺牲，排除万难，去争取胜利。",
+                author: "毛泽东",
+                tags: ["决心", "勇气", "胜利"]
+            },
+            {
+                text: "一切反动派都是纸老虎。",
+                author: "毛泽东",
+                tags: ["革命", "斗争", "信念"]
+            },
+            {
+                text: "谦虚使人进步，骄傲使人落后。",
+                author: "毛泽东",
+                tags: ["谦虚", "进步", "品德"]
+            },
+            {
+                text: "世上无难事，只要肯登攀。",
+                author: "毛泽东",
+                tags: ["奋斗", "信念", "成功"]
+            },
+            {
+                text: "我们要像蚕一样，将最后一根丝都吐出来贡献给人民。",
+                author: "周恩来",
+                tags: ["奉献", "人民", "无私"]
+            },
+            {
+                text: "为革命牺牲，是人类最壮丽的事业。",
+                author: "方志敏",
+                tags: ["牺牲", "革命", "壮丽"]
+            },
+            {
+                text: "砍头不要紧，只要主义真。杀了夏明翰，还有后来人。",
+                author: "夏明翰",
+                tags: ["信念", "牺牲", "革命"]
+            },
+            {
+                text: "敌人只能砍下我们的头颅，决不能动摇我们的信仰。",
+                author: "方志敏",
+                tags: ["信仰", "坚定", "革命"]
+            },
+            {
+                text: "我们中华民族有同自己的敌人血战到底的气概。",
+                author: "毛泽东",
+                tags: ["民族", "气概", "斗争"]
+            }
+        ];
+
+        // 初始化每日红色文案
+        function initDailyQuote() {
+            const today = new Date().toDateString();
+            const quoteDateElement = document.getElementById('quote-date');
+            quoteDateElement.textContent = formatDate(new Date());
+            
+            // 检查是否已经有今天的文案
+            let dailyQuote = localStorage.getItem('dailyQuote');
+            let dailyQuoteDate = localStorage.getItem('dailyQuoteDate');
+            
+            if (dailyQuote && dailyQuoteDate === today) {
+                // 使用已保存的今日文案
+                displayQuote(JSON.parse(dailyQuote));
+            } else {
+                // 生成新的随机文案
+                const randomQuote = getRandomQuote();
+                localStorage.setItem('dailyQuote', JSON.stringify(randomQuote));
+                localStorage.setItem('dailyQuoteDate', today);
+                displayQuote(randomQuote);
+            }
+        }
+
+        // 获取随机文案
+        function getRandomQuote() {
+            // 获取今天已经使用过的文案索引
+            const usedQuotes = JSON.parse(localStorage.getItem('usedQuotes') || '[]');
+            const today = new Date().toDateString();
+            const lastUsedDate = localStorage.getItem('lastUsedDate');
+            
+            // 如果是新的一天，清空已使用列表
+            if (lastUsedDate !== today) {
+                usedQuotes.length = 0;
+                localStorage.setItem('lastUsedDate', today);
+            }
+            
+            // 获取可用的文案索引
+            const availableQuotes = redQuotes.map((_, index) => index)
+                .filter(index => !usedQuotes.includes(index));
+            
+            // 如果没有可用的文案，重置已使用列表
+            if (availableQuotes.length === 0) {
+                usedQuotes.length = 0;
+                availableQuotes.push(...redQuotes.map((_, index) => index));
+            }
+            
+            // 随机选择一个文案
+            const randomIndex = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
+            usedQuotes.push(randomIndex);
+            localStorage.setItem('usedQuotes', JSON.stringify(usedQuotes));
+            
+            return redQuotes[randomIndex];
+        }
+
+        // 显示文案
+        function displayQuote(quote) {
+            document.getElementById('daily-quote-text').textContent = `"${quote.text}"`;
+            document.getElementById('daily-quote-author').textContent = `—— ${quote.author}`;
+            
+            const tagsContainer = document.getElementById('daily-quote-tags');
+            tagsContainer.innerHTML = '';
+            
+            quote.tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'daily-quote-tag';
+                tagElement.innerHTML = `<i class="fas fa-tag"></i> ${tag}`;
+                tagsContainer.appendChild(tagElement);
+            });
+        }
+
+        // 格式化日期
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            return `${year}年${month}月${day}日`;
+        }
+
+        // 页面导航功能
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 更新活动导航链接
+                document.querySelectorAll('.nav-link').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 显示对应页面
+                const pageId = this.getAttribute('data-page');
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+                
+                // 如果是星火征程页面，初始化时间轴动画
+                if (pageId === 'journey') {
+                    initTimelineAnimation();
+                }
+                
+                // 如果是笔记页面，更新笔记列表
+                if (pageId === 'notes') {
+                    renderNotes();
+                }
+            });
+        });
+
+        // 开始学习按钮
+        document.getElementById('start-journey').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('.nav-link[data-page="journey"]').click();
+        });
+
+        // 笔记功能
+        let notes = JSON.parse(localStorage.getItem('userData')).notes || [];
+        let selectedTags = [];
+        
+        // 标签选择
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        
+        // 保存笔记
+        document.getElementById('note-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('note-title').value;
+            const content = document.getElementById('note-content').value;
+            const event = document.getElementById('note-event').value;
+            
+            // 获取选中的标签
+            const tags = [];
+            document.querySelectorAll('.tag.selected').forEach(tag => {
+                tags.push(tag.getAttribute('data-tag'));
+            });
+            
+            if (title && content) {
+                const newNote = {
+                    id: Date.now(),
+                    title,
+                    content,
+                    event,
+                    tags,
+                    date: new Date().toLocaleDateString('zh-CN', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                };
+                
+                notes.unshift(newNote);
+                
+                // 更新用户数据
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                userData.notes = notes;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                renderNotes();
+                
+                // 重置表单
+                this.reset();
+                document.querySelectorAll('.tag.selected').forEach(tag => {
+                    tag.classList.remove('selected');
+                });
+                
+                // 显示成功消息
+                showNotification('笔记保存成功！', 'success');
+                
+                // 更新UI
+                updateUI();
+            } else {
+                showNotification('请填写标题和内容！', 'error');
+            }
+        });
+        
+        // 渲染笔记列表
+        function renderNotes(filterTag = 'all') {
+            const notesList = document.getElementById('notes-list');
+            notesList.innerHTML = '';
+            
+            let filteredNotes = notes;
+            if (filterTag !== 'all') {
+                filteredNotes = notes.filter(note => note.tags.includes(filterTag));
+            }
+            
+            if (filteredNotes.length === 0) {
+                notesList.innerHTML = `
+                    <div class="empty-state" style="text-align: center; padding: 3rem; grid-column: 1 / -1;">
+                        <div style="font-size: 4rem; color: #ddd; margin-bottom: 1rem;"><i class="fas fa-sticky-note"></i></div>
+                        <h3 style="color: #777; margin-bottom: 1rem;">没有找到相关笔记</h3>
+                        <p>尝试选择其他标签或创建新笔记</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredNotes.forEach(note => {
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card';
+                noteCard.innerHTML = `
+                    <h3 class="note-title"><i class="fas fa-bookmark"></i> ${note.title}</h3>
+                    <div class="note-content">${note.content}</div>
+                    <div class="note-tags">
+                        ${note.tags.map(tag => `<span class="note-tag"><i class="fas fa-tag"></i> ${tag}</span>`).join('')}
+                    </div>
+                    <div class="note-meta">
+                        <div class="note-date"><i class="far fa-clock"></i> ${note.date}</div>
+                        <div class="note-actions">
+                            <button class="note-action delete-btn" data-id="${note.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                notesList.appendChild(noteCard);
+            });
+            
+            // 添加删除事件监听器
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const noteId = parseInt(this.getAttribute('data-id'));
+                    if (confirm('确定要删除这条笔记吗？')) {
+                        notes = notes.filter(n => n.id !== noteId);
+                        
+                        // 更新用户数据
+                        const userData = JSON.parse(localStorage.getItem('userData'));
+                        userData.notes = notes;
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        
+                        renderNotes(document.querySelector('.filter-tag.active').getAttribute('data-tag'));
+                        showNotification('笔记已删除', 'success');
+                        
+                        // 更新UI
+                        updateUI();
+                    }
+                });
+            });
+        }
+        
+        // 笔记筛选
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tag').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                const filterTag = this.getAttribute('data-tag');
+                renderNotes(filterTag);
+            });
+        });
+        
+        // 初始渲染笔记
+        renderNotes();
+
+        // 时间轴动画
+        function initTimelineAnimation() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            // 重置所有项目状态
+            timelineItems.forEach(item => {
+                item.classList.remove('visible');
+            });
+            
+            // 使用Intersection Observer API检测元素是否进入视口
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            // 观察每个时间轴项目
+            timelineItems.forEach(item => {
+                observer.observe(item);
+            });
+        }
+        
+        // 初始化时间轴动画
+        setTimeout(initTimelineAnimation, 500);
+        
+        // 时间轴导航按钮功能
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        let currentItemIndex = 0;
+        
+        function scrollToItem(index) {
+            if (index >= 0 && index < document.querySelectorAll('.timeline-item').length) {
+                document.querySelectorAll('.timeline-item')[index].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                currentItemIndex = index;
+            }
+        }
+        
+        prevBtn.addEventListener('click', function() {
+            scrollToItem(currentItemIndex - 1);
+        });
+        
+        nextBtn.addEventListener('click', function() {
+            scrollToItem(currentItemIndex + 1);
+        });
+        
+        // 添加笔记按钮功能
+        document.querySelectorAll('.add-note-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const event = this.getAttribute('data-event');
+                
+                // 切换到笔记页面
+                document.querySelector('.nav-link[data-page="notes"]').click();
+                
+                // 设置关联事件
+                setTimeout(() => {
+                    document.getElementById('note-event').value = event;
+                    document.getElementById('note-title').focus();
+                }, 500);
+            });
+        });
+        
+        // 模态框功能
+        const modalButtons = document.querySelectorAll('.timeline-btn[data-modal]');
+        const modals = document.querySelectorAll('.modal');
+        const closeButtons = document.querySelectorAll('.modal-close');
+        
+        modalButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modalId = this.getAttribute('data-modal');
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+        
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(event) {
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+        
+        // 刷新文案按钮
+        document.getElementById('refresh-quote').addEventListener('click', function() {
+            const randomQuote = getRandomQuote();
+            localStorage.setItem('dailyQuote', JSON.stringify(randomQuote));
+            displayQuote(randomQuote);
+            showNotification('已刷新红色文案', 'success');
+        });
+
+        // 分享文案按钮
+        document.getElementById('share-quote').addEventListener('click', function() {
+            const quoteText = document.getElementById('daily-quote-text').textContent;
+            const quoteAuthor = document.getElementById('daily-quote-author').textContent;
+            
+            const shareText = `${quoteText} ${quoteAuthor} - 来自《星火征程》红色学习平台`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '今日红色文案',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(err => {
+                    console.log('分享失败:', err);
+                    copyToClipboard(shareText);
+                });
+            } else {
+                copyToClipboard(shareText);
+            }
+        });
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showNotification('文案已复制到剪贴板', 'success');
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div style="position: fixed; top: 100px; right: 20px; background: ${type === 'success' ? '#4caf50' : '#f44336'}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 10000; display: flex; align-items: center;">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}" style="margin-right: 10px;"></i>
+                    ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后移除通知
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // 更新UI
+        function updateUI() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const notes = userData.notes || [];
+            const achievements = userData.achievements || [];
+            const progress = userData.progress || {};
+            
+            // 更新首页统计
+            document.getElementById('total-notes').textContent = notes.length;
+            document.getElementById('total-achievements').textContent = achievements.length;
+            
+            // 计算总进度
+            let totalProgress = 0;
+            let eventCount = 0;
+            for (const event in progress) {
+                totalProgress += progress[event];
+                eventCount++;
+            }
+            const avgProgress = eventCount > 0 ? Math.round(totalProgress / eventCount) : 0;
+            document.getElementById('progress-percent').textContent = `${avgProgress}%`;
+            
+            // 更新成就进度
+            updateAchievementProgress();
+        }
+        
+        // 更新成就进度
+        function updateAchievementProgress() {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            const notes = userData.notes || [];
+            const achievements = userData.achievements || [];
+            const progress = userData.progress || {};
+            
+            // 笔记达人成就
+            const noteCount = notes.length;
+            const noteAchievementProgress = Math.min(100, (noteCount / 5) * 100);
+            document.querySelectorAll('.achievement-card')[1].querySelector('.achievement-progress-fill').style.width = `${noteAchievementProgress}%`;
+            document.querySelectorAll('.achievement-card')[1].querySelector('.achievement-status').textContent = `${noteCount}/5 笔记`;
+            
+            // 长征之路成就
+            let completedEvents = 0;
+            for (const event in progress) {
+                if (progress[event] >= 100) completedEvents++;
+            }
+            const eventAchievementProgress = Math.min(100, (completedEvents / 6) * 100);
+            document.querySelectorAll('.achievement-card')[2].querySelector('.achievement-progress-fill').style.width = `${eventAchievementProgress}%`;
+            document.querySelectorAll('.achievement-card')[2].querySelector('.achievement-status').textContent = `${completedEvents}/6 事件`;
+            
+            // 红色传承者成就
+            const achievementCount = achievements.length;
+            const achievementProgress = Math.min(100, (achievementCount / 4) * 100);
+            document.querySelectorAll('.achievement-card')[3].querySelector('.achievement-progress-fill').style.width = `${achievementProgress}%`;
+            document.querySelectorAll('.achievement-card')[3].querySelector('.achievement-status').textContent = `${achievementCount}/4 成就`;
+            
+            // 星火燎原成就
+            const loginDays = userData.loginDays || 1;
+            const loginAchievementProgress = Math.min(100, (loginDays / 7) * 100);
+            document.querySelectorAll('.achievement-card')[4].querySelector('.achievement-progress-fill').style.width = `${loginAchievementProgress}%`;
+            document.querySelectorAll('.achievement-card')[4].querySelector('.achievement-status').textContent = `${loginDays}/7 天`;
+        }
+        
+        // 为功能卡片添加悬停效果
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'var(--card-shadow)';
+            });
+        });
+    </script>
+</body>
+</html>
